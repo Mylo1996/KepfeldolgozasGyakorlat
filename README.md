@@ -1,2 +1,7 @@
 # KepfeldolgozasGyakorlat
-Képfeldolgozás Gyakorlat
+- Histogramm
+- Brightening
+- Darkening
+- Histogramm Equalization
+- Convolution
+- Wallis Filter
