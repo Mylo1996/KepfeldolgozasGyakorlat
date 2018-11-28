@@ -1,0 +1,2 @@
+# KepfeldolgozasGyakorlat
+Képfeldolgozás Gyakorlat
