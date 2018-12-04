@@ -86,11 +86,7 @@ void circularIndexing(Mat src, Mat dst, float Kernel[][3])
 
 
 Mat WallisFunction(Mat src, int Md, int Sd,float Amax, float r) {
-	//float Gauss[3][3] = {
-	//					{1 / 9.0, 1 / 9.0, 1 / 9.0},
-	//					{1 / 9.0, 1 / 9.0, 1 / 9.0},
-	//					{1 / 9.0,1 / 9.0, 1 / 9.0}
-	//};
+	
 	Mat F = src.clone();
 	Mat M = src.clone();
 	Mat S;
@@ -102,13 +98,9 @@ Mat WallisFunction(Mat src, int Md, int Sd,float Amax, float r) {
 	Mat Wallis = src.clone();
 
 
-
-	
-
 	for (int i = 0; i < 5; i++) {
 		GaussianBlur(M, M, Size(3, 3), 0, 0);
 	}
-	
 
 
 	for (int i = 0; i < F.cols; i++) {
@@ -185,297 +177,297 @@ int main(int argc, char** argv)
 	}
 
 
-	//int hist[256];
-	//for (int i = 0; i < 256; i++) {
-	//	hist[i] = 0;
-	//}
+	int hist[256];
+	for (int i = 0; i < 256; i++) {
+		hist[i] = 0;
+	}
 
-	//for (int i = 0; i < src.cols; i++) {
-	//	for (int j = 0; j < src.rows; j++) {
-	//		hist[(int)src.at<uchar>(Point(j, i))]++;
-	//	}
-	//}
-	//float max = 0;
-	//for (int i = 0; i < 256; i++) {
-	//	if (max < hist[i]) {
-	//		max = hist[i];
-	//	}
-	//}
-
-
-	//for (int i = 0; i < 256; i++) {
-	//	float tmp = hist[i];
-	//	hist[i] = (tmp / max) * 255;
-	//}
-
-	//Mat histImage0(255, 255, CV_8UC1, Scalar(0, 0, 0));
-	//for (int i = 0; i < 256; i++) {
-	//	line(histImage0, Point(i, 255), Point(i, 255 - hist[i]), Scalar(255, 0, 0), 1, 8, 0);
-	//}
-
-	//namedWindow("hist", WINDOW_AUTOSIZE);
-	//imshow("hist", histImage0);
+	for (int i = 0; i < src.cols; i++) {
+		for (int j = 0; j < src.rows; j++) {
+			hist[(int)src.at<uchar>(Point(j, i))]++;
+		}
+	}
+	float max = 0;
+	for (int i = 0; i < 256; i++) {
+		if (max < hist[i]) {
+			max = hist[i];
+		}
+	}
 
 
-	//namedWindow("Source", WINDOW_AUTOSIZE);
-	//imshow("Source", src);
-	//waitKey(0);
-	//destroyAllWindows();
+	for (int i = 0; i < 256; i++) {
+		float tmp = hist[i];
+		hist[i] = (tmp / max) * 255;
+	}
+
+	Mat histImage0(255, 255, CV_8UC1, Scalar(0, 0, 0));
+	for (int i = 0; i < 256; i++) {
+		line(histImage0, Point(i, 255), Point(i, 255 - hist[i]), Scalar(255, 0, 0), 1, 8, 0);
+	}
+
+	namedWindow("hist", WINDOW_AUTOSIZE);
+	imshow("hist", histImage0);
 
 
-
-
-	////////////////////////////// HIST 1 /////////////////////////////////////
-
-	//int hist2[256];
-
-	//for (int i = 0; i < 256; i++) {
-	//	float tmp = hist[i];
-	//	hist2[i] = 255 * sqrt(tmp / 255);
-	//}
+	namedWindow("Source", WINDOW_AUTOSIZE);
+	imshow("Source", src);
+	waitKey(0);
+	destroyAllWindows();
 
 
 
 
+	//////////////////////////// HIST 1 /////////////////////////////////////
 
-	//Mat histImage2(src.rows, src.cols, CV_8UC1, Scalar(0, 0, 0));
+	int hist2[256];
+
+	for (int i = 0; i < 256; i++) {
+		float tmp = hist[i];
+		hist2[i] = 255 * sqrt(tmp / 255);
+	}
 
 
-	//for (int i = 0; i < src.cols; i++) {
-	//	for (int j = 0; j < src.rows; j++) {
-	//		float tmp = src.at<uchar>(Point(j, i));
-	//		histImage2.at<uchar>(Point(j, i)) = 255 * std::sqrt(tmp / 255.0);
-	//	}
-	//}
-	////
-	//namedWindow("Bright", WINDOW_AUTOSIZE);
-	//imshow("Bright", histImage2);
+
+
+
+	Mat histImage2(src.rows, src.cols, CV_8UC1, Scalar(0, 0, 0));
+
+
+	for (int i = 0; i < src.cols; i++) {
+		for (int j = 0; j < src.rows; j++) {
+			float tmp = src.at<uchar>(Point(j, i));
+			histImage2.at<uchar>(Point(j, i)) = 255 * std::sqrt(tmp / 255.0);
+		}
+	}
 	//
+	namedWindow("Bright", WINDOW_AUTOSIZE);
+	imshow("Bright", histImage2);
+	
 
 
-	//for (int i = 0; i < 256; i++) {
-	//	hist[i] = 0;
-	//}
+	for (int i = 0; i < 256; i++) {
+		hist[i] = 0;
+	}
 
-	//for (int i = 0; i < histImage2.cols; i++) {
-	//	for (int j = 0; j < histImage2.rows; j++) {
-	//		hist[(int)histImage2.at<uchar>(Point(j, i))]++;
-	//	}
-	//}
-	//max = 0;
-	//for (int i = 0; i < 256; i++) {
-	//	if (max < hist[i]) {
-	//		max = hist[i];
-	//	}
-	//}
+	for (int i = 0; i < histImage2.cols; i++) {
+		for (int j = 0; j < histImage2.rows; j++) {
+			hist[(int)histImage2.at<uchar>(Point(j, i))]++;
+		}
+	}
+	max = 0;
+	for (int i = 0; i < 256; i++) {
+		if (max < hist[i]) {
+			max = hist[i];
+		}
+	}
 
 
-	//for (int i = 0; i < 256; i++) {
-	//	float tmp = hist[i];
-	//	hist[i] = (tmp / max) * 255;
-	//}
+	for (int i = 0; i < 256; i++) {
+		float tmp = hist[i];
+		hist[i] = (tmp / max) * 255;
+	}
 
-	//Mat histtmp2(255, 255, CV_8UC1, Scalar(0, 0, 0));
-	//for (int i = 0; i < 256; i++) {
-	//	line(histtmp2, Point(i, 255), Point(i, 255 - hist[i]), Scalar(255, 0, 0), 2, 8, 0);
-	//}
+	Mat histtmp2(255, 255, CV_8UC1, Scalar(0, 0, 0));
+	for (int i = 0; i < 256; i++) {
+		line(histtmp2, Point(i, 255), Point(i, 255 - hist[i]), Scalar(255, 0, 0), 2, 8, 0);
+	}
 
-	//namedWindow("Bright Histogram", WINDOW_AUTOSIZE);
-	//imshow("Bright Histogram", histtmp2);
-	//waitKey(0);
-	//destroyAllWindows();
+	namedWindow("Bright Histogram", WINDOW_AUTOSIZE);
+	imshow("Bright Histogram", histtmp2);
+	waitKey(0);
+	destroyAllWindows();
 
 
 
 
-	//////////////////////////// HIST 3 ///////////////////////////////////////
+	////////////////////////// HIST 3 ///////////////////////////////////////
 
-	//int hist3[256];
+	int hist3[256];
 
-	//for (int i = 0; i < 256; i++) {
-	//	float tmp = hist[i];
-	//	hist3[i] = 255 * (tmp / 255)*(tmp / 255);
-	//}
+	for (int i = 0; i < 256; i++) {
+		float tmp = hist[i];
+		hist3[i] = 255 * (tmp / 255)*(tmp / 255);
+	}
 
 
 
 
 
-	//Mat histImage3(src.rows, src.cols, CV_8UC1, Scalar(0, 0, 0));
+	Mat histImage3(src.rows, src.cols, CV_8UC1, Scalar(0, 0, 0));
 
-	//for (int i = 0; i < src.cols; i++) {
-	//	for (int j = 0; j < src.rows; j++) {
-	//		float tmp = src.at<uchar>(Point(j, i));
-	//		histImage3.at<uchar>(Point(j, i)) = 255 * (tmp / 255.0)*(tmp / 255.0);
-	//	}
-	//}
+	for (int i = 0; i < src.cols; i++) {
+		for (int j = 0; j < src.rows; j++) {
+			float tmp = src.at<uchar>(Point(j, i));
+			histImage3.at<uchar>(Point(j, i)) = 255 * (tmp / 255.0)*(tmp / 255.0);
+		}
+	}
 
 
 
-	//namedWindow("Dark", WINDOW_AUTOSIZE);
-	//imshow("Dark", histImage3);
+	namedWindow("Dark", WINDOW_AUTOSIZE);
+	imshow("Dark", histImage3);
 
-	//for (int i = 0; i < 256; i++) {
-	//	hist[i] = 0;
-	//}
+	for (int i = 0; i < 256; i++) {
+		hist[i] = 0;
+	}
 
-	//for (int i = 0; i < histImage3.cols; i++) {
-	//	for (int j = 0; j < histImage3.rows; j++) {
-	//		hist[(int)histImage3.at<uchar>(Point(j, i))]++;
-	//	}
-	//}
-	//max = 0;
-	//for (int i = 0; i < 256; i++) {
-	//	if (max < hist[i]) {
-	//		max = hist[i];
-	//	}
-	//}
+	for (int i = 0; i < histImage3.cols; i++) {
+		for (int j = 0; j < histImage3.rows; j++) {
+			hist[(int)histImage3.at<uchar>(Point(j, i))]++;
+		}
+	}
+	max = 0;
+	for (int i = 0; i < 256; i++) {
+		if (max < hist[i]) {
+			max = hist[i];
+		}
+	}
 
 
 
-	//for (int i = 0; i < 256; i++) {
-	//	float tmp = hist[i];
-	//	hist[i] = (tmp / max) * 255;
-	//}
+	for (int i = 0; i < 256; i++) {
+		float tmp = hist[i];
+		hist[i] = (tmp / max) * 255;
+	}
 
-	//Mat histtmp3(255, 255, CV_8UC1, Scalar(0, 0, 0));
-	//for (int i = 0; i < 256; i++) {
-	//	line(histtmp3, Point(i, 255), Point(i, 255 - hist[i]), Scalar(255, 0, 0), 2, 8, 0);
-	//}
+	Mat histtmp3(255, 255, CV_8UC1, Scalar(0, 0, 0));
+	for (int i = 0; i < 256; i++) {
+		line(histtmp3, Point(i, 255), Point(i, 255 - hist[i]), Scalar(255, 0, 0), 2, 8, 0);
+	}
 
-	//namedWindow("Dark Histogram", WINDOW_AUTOSIZE);
-	//imshow("Dark Histogram", histtmp3);
-	//waitKey(0);
-	//destroyAllWindows();
+	namedWindow("Dark Histogram", WINDOW_AUTOSIZE);
+	imshow("Dark Histogram", histtmp3);
+	waitKey(0);
+	destroyAllWindows();
 
 
-	//////////////////////////// EQUALIZE /////////////////////////
+	////////////////////////// EQUALIZE /////////////////////////
 
-	//const float K = 20;
-	//int N = src.cols * src.rows;
-	//float NperK = N / K;
+	const float K = 20;
+	int N = src.cols * src.rows;
+	float NperK = N / K;
 
-	////cout << "N = " << N << endl;
-	////cout << "K = " << K << endl;
+	//cout << "N = " << N << endl;
+	//cout << "K = " << K << endl;
 
-	////cout << "N//K = " << NperK << endl;
+	//cout << "N//K = " << NperK << endl;
 
 
 
-	//int histtemp[256];
-	//for (int i = 0; i < 256; i++) {
-	//	histtemp[i] = 0;
-	//}
+	int histtemp[256];
+	for (int i = 0; i < 256; i++) {
+		histtemp[i] = 0;
+	}
 
-	//for (int i = 0; i < src.cols; i++) {
-	//	for (int j = 0; j < src.rows; j++) {
-	//		histtemp[(int)src.at<uchar>(Point(j, i))]++;
-	//	}
-	//}
+	for (int i = 0; i < src.cols; i++) {
+		for (int j = 0; j < src.rows; j++) {
+			histtemp[(int)src.at<uchar>(Point(j, i))]++;
+		}
+	}
 
-	//int lut[256];
-	//for (int i = 0; i < 256; i++) {
-	//	lut[i] = 0;
-	//}
+	int lut[256];
+	for (int i = 0; i < 256; i++) {
+		lut[i] = 0;
+	}
 
-	//int counter = 0;
-	//int stepper = 0;
-	//for (int i = 0; i < 256; i++) {
-	//	if (counter < NperK) {
-	//		counter += histtemp[i];
-	//		lut[i] = stepper * 256.0 / K;
-	//	}
-	//	else {
-	//		counter = 0;
-	//		lut[i] = stepper * 256.0 / K;
-	//		stepper++;
-	//	}
-	//}
+	int counter = 0;
+	int stepper = 0;
+	for (int i = 0; i < 256; i++) {
+		if (counter < NperK) {
+			counter += histtemp[i];
+			lut[i] = stepper * 256.0 / K;
+		}
+		else {
+			counter = 0;
+			lut[i] = stepper * 256.0 / K;
+			stepper++;
+		}
+	}
 
 
 
-	//Mat histImage4(src.rows, src.cols, CV_8UC1, Scalar(0, 0, 0));
+	Mat histImage4(src.rows, src.cols, CV_8UC1, Scalar(0, 0, 0));
 
-	//for (int i = 0; i < src.cols; i++) {
-	//	for (int j = 0; j < src.rows; j++) {
-	//		int tmp = src.at<uchar>(Point(j, i));
-	//		histImage4.at<uchar>(Point(j, i)) = lut[tmp];
-	//	}
-	//}
+	for (int i = 0; i < src.cols; i++) {
+		for (int j = 0; j < src.rows; j++) {
+			int tmp = src.at<uchar>(Point(j, i));
+			histImage4.at<uchar>(Point(j, i)) = lut[tmp];
+		}
+	}
 
-	//normalize(histImage4, histImage4, 0, 255, NORM_MINMAX, CV_8UC1);
+	normalize(histImage4, histImage4, 0, 255, NORM_MINMAX, CV_8UC1);
 
 
-	//float hist4[256];
-	//for (int i = 0; i < 256; i++) {
-	//	hist4[i] = 0;
-	//}
+	float hist4[256];
+	for (int i = 0; i < 256; i++) {
+		hist4[i] = 0;
+	}
 
-	//for (int i = 0; i < histImage4.cols; i++) {
-	//	for (int j = 0; j < histImage4.rows; j++) {
-	//		hist4[(int)histImage4.at<uchar>(Point(j, i))]++;
-	//	}
-	//}
+	for (int i = 0; i < histImage4.cols; i++) {
+		for (int j = 0; j < histImage4.rows; j++) {
+			hist4[(int)histImage4.at<uchar>(Point(j, i))]++;
+		}
+	}
 
 
 
 
 
-	//max = 0;
-	//for (int i = 0; i < 256; i++) {
-	//	if (max < hist4[i]) {
-	//		max = hist4[i];
-	//	}
-	//}
+	max = 0;
+	for (int i = 0; i < 256; i++) {
+		if (max < hist4[i]) {
+			max = hist4[i];
+		}
+	}
 
-	//for (int i = 0; i < 256; i++) {
-	//	float tmp = hist4[i];
-	//	hist4[i] = (tmp / max) * 255;
-	//}
+	for (int i = 0; i < 256; i++) {
+		float tmp = hist4[i];
+		hist4[i] = (tmp / max) * 255;
+	}
 
 
 
 
-	//Mat histtmp4(255, 255, CV_8UC1, Scalar(0, 0, 0));
-	//for (int i = 0; i < 256; i++) {
-	//	line(histtmp4, Point(i, 255), Point(i, 255 - hist4[i]), Scalar(255, 0, 0), 1, 8, 0);
-	//}
+	Mat histtmp4(255, 255, CV_8UC1, Scalar(0, 0, 0));
+	for (int i = 0; i < 256; i++) {
+		line(histtmp4, Point(i, 255), Point(i, 255 - hist4[i]), Scalar(255, 0, 0), 1, 8, 0);
+	}
 
-	//namedWindow("Equalized", WINDOW_AUTOSIZE);
-	//imshow("Equalized", histtmp4);
+	namedWindow("Equalized", WINDOW_AUTOSIZE);
+	imshow("Equalized", histtmp4);
 
 
-	//namedWindow("Equalized Histogram", WINDOW_AUTOSIZE);
-	//imshow("Equalized Histogram", histImage4);
+	namedWindow("Equalized Histogram", WINDOW_AUTOSIZE);
+	imshow("Equalized Histogram", histImage4);
 
 
 
-	//waitKey(0);
-	//destroyAllWindows();
+	waitKey(0);
+	destroyAllWindows();
 
 
-	////////////////////////////// CONVOLUTION ///////////////////////////////////
+	//////////////////////////// CONVOLUTION ///////////////////////////////////
 
-	//float Gauss[3][3] = {
-	//						{1 / 9.0, 1 / 9.0, 1 / 9.0},
-	//						{1 / 9.0, 1 / 9.0, 1 / 9.0},
-	//						{1 / 9.0,1 / 9.0, 1 / 9.0}
-	//};
+	float Gauss[3][3] = {
+							{1 / 9.0, 1 / 9.0, 1 / 9.0},
+							{1 / 9.0, 1 / 9.0, 1 / 9.0},
+							{1 / 9.0,1 / 9.0, 1 / 9.0}
+	};
 
 
-	//Mat convImage = src.clone();
-	//for (int y = 0; y < src.rows; y++)
-	//	for (int x = 0; x < src.cols; x++)
-	//		convImage.at<uchar>(y, x) = 0.0;
+	Mat convImage = src.clone();
+	for (int y = 0; y < src.rows; y++)
+		for (int x = 0; x < src.cols; x++)
+			convImage.at<uchar>(y, x) = 0.0;
 
-	//circularIndexing(src, convImage, Gauss);
-	//namedWindow("Convolution", WINDOW_AUTOSIZE);
-	//imshow("Convolution", convImage);
+	circularIndexing(src, convImage, Gauss);
+	namedWindow("Convolution", WINDOW_AUTOSIZE);
+	imshow("Convolution", convImage);
 
-	//namedWindow("Source", WINDOW_AUTOSIZE);
-	//imshow("Source", src);
-	//waitKey(0);
-	//destroyAllWindows();
+	namedWindow("Source", WINDOW_AUTOSIZE);
+	imshow("Source", src);
+	waitKey(0);
+	destroyAllWindows();
 
 
 	//////////////////////////// WALLIS ///////////////////////////////////
