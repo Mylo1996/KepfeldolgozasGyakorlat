@@ -5,3 +5,4 @@
 - Histogramm Equalization C++
 - Convolution C++
 - Wallis Filter C++
+- Median Filter C++
