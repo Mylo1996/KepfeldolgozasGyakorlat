@@ -86,7 +86,11 @@ void circularIndexing(Mat src, Mat dst, float Kernel[][3])
 
 
 Mat WallisFunction(Mat src, int Md, int Sd,float Amax, float r) {
-	
+	//float Gauss[3][3] = {
+	//					{1 / 9.0, 1 / 9.0, 1 / 9.0},
+	//					{1 / 9.0, 1 / 9.0, 1 / 9.0},
+	//					{1 / 9.0,1 / 9.0, 1 / 9.0}
+	//};
 	Mat F = src.clone();
 	Mat M = src.clone();
 	Mat S;
@@ -98,9 +102,13 @@ Mat WallisFunction(Mat src, int Md, int Sd,float Amax, float r) {
 	Mat Wallis = src.clone();
 
 
+
+	
+
 	for (int i = 0; i < 5; i++) {
 		GaussianBlur(M, M, Size(3, 3), 0, 0);
 	}
+	
 
 
 	for (int i = 0; i < F.cols; i++) {
@@ -160,8 +168,42 @@ Mat WallisFunction(Mat src, int Md, int Sd,float Amax, float r) {
 }
 
 
+void insertionSort(int window[])
+{
+	int temp, i, j;
+	for (i = 0; i < 9; i++) {
+		temp = window[i];
+		for (j = i - 1; j >= 0 && temp < window[j]; j--) {
+			window[j + 1] = window[j];
+		}
+		window[j + 1] = temp;
+	}
+}
 
+int sumOfMinAbsDifferences(int arr[], int n)
+{
+	// sort the given array 
+	sort(arr, arr + n);
 
+	// initialize sum 
+	int sum = 0;
+
+	// min absolute difference for 
+	// the 1st array element 
+	sum += abs(arr[0] - arr[1]);
+
+	// min absolute difference for 
+	// the last array element 
+	sum += abs(arr[n - 1] - arr[n - 2]);
+
+	// find min absolute difference for rest of the 
+	// array elements and add them to sum 
+	for (int i = 1; i < n - 1; i++)
+		sum += min(abs(arr[i] - arr[i - 1]), abs(arr[i] - arr[i + 1]));
+
+	// required sum     
+	return sum;
+}
 
 int main(int argc, char** argv)
 {
@@ -482,6 +524,109 @@ int main(int argc, char** argv)
 	namedWindow("Source", WINDOW_AUTOSIZE);
 	imshow("Source", src);
 	
+	waitKey(0);
+	destroyAllWindows();
+
+	//////////////////////////// OUTLIER FILTER ///////////////////////////////////
+	int outlierwindow[9];
+	int n = sizeof(outlierwindow) / sizeof(outlierwindow[0]);
+
+	int treshold = 0;
+
+
+	float Average[3][3] = {
+							{1 / 8.0, 1 / 8.0, 1 / 8.0},
+							{1 / 8.0, 0 / 8.0, 1 / 8.0},
+							{1 / 8.0,1 / 8.0, 1 / 8.0}
+	};
+
+	Mat outlier = src.clone();
+	for (int y = 0; y < src.rows; y++)
+		for (int x = 0; x < src.cols; x++)
+			outlier.at<uchar>(y, x) = 0.0;
+
+	Mat outlierTmp = src.clone();
+	for (int y = 0; y < src.rows; y++)
+		for (int x = 0; x < src.cols; x++)
+			outlierTmp.at<uchar>(y, x) = 0.0;
+	circularIndexing(src, outlierTmp, Average);
+
+	for (int y = 1; y < src.rows - 1; y++) {
+		for (int x = 1; x < src.cols - 1; x++) {
+
+			// Pick up window element
+
+			outlierwindow[0] = src.at<uchar>(y - 1, x - 1);
+			outlierwindow[1] = src.at<uchar>(y, x - 1);
+			outlierwindow[2] = src.at<uchar>(y + 1, x - 1);
+			outlierwindow[3] = src.at<uchar>(y - 1, x);
+			outlierwindow[4] = src.at<uchar>(y, x);
+			outlierwindow[5] = src.at<uchar>(y + 1, x);
+			outlierwindow[6] = src.at<uchar>(y - 1, x + 1);
+			outlierwindow[7] = src.at<uchar>(y, x + 1);
+			outlierwindow[8] = src.at<uchar>(y + 1, x + 1);
+
+			int diff = sumOfMinAbsDifferences(outlierwindow, n);
+			if (diff > treshold) {
+				outlier.at<uchar>(y, x) = outlierTmp.at<uchar>(y, x);
+			}
+			else {
+				outlier.at<uchar>(y, x) = src.at<uchar>(y, x);
+			}
+
+			
+		}
+	}
+
+	namedWindow("Source", WINDOW_AUTOSIZE);
+	imshow("Source", src);
+
+
+	namedWindow("Outlier", WINDOW_AUTOSIZE);
+	imshow("Outlier", outlier);
+	waitKey(0);
+	destroyAllWindows();
+
+
+
+	//////////////////////////// MEDIAN FILTER ///////////////////////////////////
+
+	int window[9];
+	Mat median = src.clone();
+	for (int y = 0; y < src.rows; y++)
+		for (int x = 0; x < src.cols; x++)
+			median.at<uchar>(y, x) = 0.0;
+
+	for (int y = 1; y < src.rows - 1; y++) {
+		for (int x = 1; x < src.cols - 1; x++) {
+
+			// Pick up window element
+
+			window[0] = src.at<uchar>(y - 1, x - 1);
+			window[1] = src.at<uchar>(y, x - 1);
+			window[2] = src.at<uchar>(y + 1, x - 1);
+			window[3] = src.at<uchar>(y - 1, x);
+			window[4] = src.at<uchar>(y, x);
+			window[5] = src.at<uchar>(y + 1, x);
+			window[6] = src.at<uchar>(y - 1, x + 1);
+			window[7] = src.at<uchar>(y, x + 1);
+			window[8] = src.at<uchar>(y + 1, x + 1);
+
+			// sort the window to find median
+			insertionSort(window);
+
+			// assign the median to centered element of the matrix
+			median.at<uchar>(y, x) = window[4];
+		}
+	}
+
+	namedWindow("Source", WINDOW_AUTOSIZE);
+	imshow("Source", src);
+
+
+	namedWindow("Median", WINDOW_AUTOSIZE);
+	imshow("Median", median);
+
 	waitKey(0);
 	destroyAllWindows();
 	
